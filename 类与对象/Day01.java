@@ -25,7 +25,7 @@ class Person {
         System.out.println("姓名："+name+",年龄："+age);
     }
 }
-public class Day1 {
+public class Day01 {
     public static void main(String[] args) {
         Person per = new Person("张三",20);
         per.getPersonInfo();
