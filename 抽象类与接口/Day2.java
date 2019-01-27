@@ -1,5 +1,4 @@
-//模板设计模式
-//抽象 基类实现
+//抽象基类实现
 //abstract class CaffeineBeverage {
 //    final void prepareRecipe() {
 //        boilWater();
