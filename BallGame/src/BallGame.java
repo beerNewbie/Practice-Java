@@ -7,8 +7,8 @@ public class BallGame extends JFrame {
     Image ball = Toolkit.getDefaultToolkit().getImage("images/ball.png");
     Image desk = Toolkit.getDefaultToolkit().getImage("images/desk.jpg");
 
-    double x = 100;//小球的横坐标
-    double y = 100;//小球的纵坐标
+    double x = 150;//小球的横坐标
+    double y = 150;//小球的纵坐标
    // boolean right = true;//水平方向
     double degree = 3.14/3;//弧度，60度
 
