@@ -14,7 +14,7 @@ public class MyGameFrame extends Frame{
     Image bg = GameUtil.getImage("images/background.png");
 
     Plane plane = new Plane(planeImg,250,350);
-    Shell[] shells = new Shell[30];
+    Shell[] shells = new Shell[20];
 
     Explode explode;
     Date startTime = new Date();
