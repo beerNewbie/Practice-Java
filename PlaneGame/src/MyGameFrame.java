@@ -16,7 +16,7 @@ public class MyGameFrame extends Frame{
     Plane plane = new Plane(planeImg,250,350);
     Shell[] shells = new Shell[20];
 
-    Explode explode;
+    Explode explode ;
     Date startTime = new Date();
     Date endTime;
     int period;//游戏持续时间
