@@ -32,7 +32,6 @@ public class Shell extends GameObject{
             degree =  -degree;
         }
 
-
         g.setColor(c);
     }
 }
