@@ -8,7 +8,6 @@ package pers.hbc.oo.abstractClass;
  * 5.抽象方法必须被子类实现
  * 抽象方法的意义：将方法的设计与实现分离了
  */
-
 public abstract class Animal {
     String str;
     public void breath() {
