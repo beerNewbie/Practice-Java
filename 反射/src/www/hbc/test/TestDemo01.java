@@ -5,8 +5,8 @@ package www.hbc.test;
  * @Date: 2019/3/17 16:06
  * @Description:工厂模式与反射
  */
-interface IComputer {
-    public void buyComputer() ;
+interface IComputer {//redundent:多余的
+    void buyComputer() ;
 }
 class Mac implements IComputer {
     @Override
@@ -37,7 +37,6 @@ class ComuterFactoy {
 
     }
 }
-
 public class TestDemo01 {
     public static void main(String[] args) {
         IComputer computer =
