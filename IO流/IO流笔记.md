@@ -223,3 +223,51 @@ public class Test {
 [ByteArrayInputStream、ByteArrayOutputStream]()
 ###### 字符内存流
 [CharArrayReader、CharArrayWrier]()
+##### 6.打印流
+###### 字节打印流：PrintStream
+###### 字符打印流：PrintWriter
+- [x] 打印流的设计属于 **装饰设计模式** -基于抽象类
+- 特点：核心依然是某个类的（OutputStream提供的write()）的功能，
+但是为了得到更好的操作效果，让其支持的功能更多一些，使用装饰类（PrintStream）
+- 优点：很容易更换装饰类来达到不同的操作效果
+- 缺点：造成类结构复杂
+##### 7.System类对IO的支持
+###### 标准输出（显示屏）：System.out
+###### 标准输入（键盘）：System.in
+###### 错误输出：System.err
+###### 7.1系统输出
+- [ ] 系统提供的out（输出到显示器颜色为黑色）、err（输出到显示器颜色为黑色）对象均是PrintStream的对象
+- [ ] 以后输出采用日志（Log）-格式化输出
+##### 7.2 系统输入
+- [ ] System.in是InputStream的直接对象
+```
+public class TestSystemIn {
+    public static void main(String[] args) throws Exception{
+        InputStream in = System.in;
+        System.out.println("请输入内容：");
+        byte[] data = new byte[1024];
+        int len = 0;
+        len = in.read(data);
+        System.out.println("输入的内容为：\n" + new String(data,0,len));
+    }
+}
+```
+##### 8.两种输入流
+###### 8.1 BufferedReader、BufferedInputStream(readLine()直接读取一行输入，默认以回车结束）
+###### 8.2 java.util.Scanner
+支持正则表达式
+- [ ] hasNextXxx():判断是否有指定类型数据输入
+- [ ] netXx():获取指定类型数据
+- [ ] useDelimiter("指定分隔符")
+```
+public class TestScanner {
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("请输入出生日期:");
+        scanner.useDelimiter("\n");//以回车为分隔符
+        if (scanner.hasNext("\\d{4}-\\d{2}-\\d{2}")) {
+            System.out.println("出生日期为：" + scanner.next());
+        }
+    }
+}
+```
