@@ -156,7 +156,7 @@ final void checkForComodification() {
 //eg：
 public class Test {
     public static void main(String[] args) {
-        List<Strring> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         Collections.addAll(list,"A","B","B","C","D","E");
         //modCount = 6
         Iterator<String> iterator = list.iterator();
@@ -167,7 +167,7 @@ public class Test {
             String str = iterator.next();
             if (strr.equals("B")) {
                 //list.remove("B");//集合类提供的remove方法，报错：ConcurrentModeficationException;
-                iterator.remove("B");//正确
+                iterator.remove();//正确
                 continue;
             }
             System.out.println(str);
@@ -227,7 +227,7 @@ public class TestMapIterator {
  - [ ] 自己实现一个html识别器：
  ```
  public class Test {
-     public static void mian(String[] args) {
+     public static void main(String[] args) {
          Stack stack = new Stack();
          stack.push(1);
          stack.push(2);
@@ -250,16 +250,18 @@ public class TestMapIterator {
 - 消息队列：kafka,RobitMQ
 ```
 public class Test {
-     public static void mian(String[] args) {
-         Queue<Integer> queue = new LinkedList<>();
-         queue.push(1);
-         queue.push(2);
-         queue.push(3);
-         System.out.println(stack.peek());//1
-         System.out.println(stack.poll());//1
-         System.out.println(stack.poll());//2
-         System.out.println(stack.poll());//3
-         System.out.println(stack.poll());//null
+     public static void main(String[] args) {
+         public static void main(String[] args) {
+                 Queue<Integer> queue = new LinkedList<>();
+                 queue.add(1);
+                 queue.add(2);
+                 queue.add(3);
+                 System.out.println(queue.peek());//1
+                 System.out.println(queue.poll());//1
+                 System.out.println(queue.poll());//2
+                 System.out.println(queue.poll());//3
+                 System.out.println(queue.poll());//null
+             }
      }
  }
 ```
