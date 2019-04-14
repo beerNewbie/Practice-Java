@@ -40,16 +40,17 @@ public boolean equals(Object obj) {
 - 2、初始化策略区别：Vector在无参构造执行后将对象数组大小初始化为10；ArrayList采用懒加载策略，在构造方法阶段并不初始化对象数组，在第一次添加元素时才初始化对象数组大小为10
 - 3、扩容策略：ArrayList扩容时，新数组变为原数组的1.5倍，Vector扩容时，新数组大小变为原数组的2倍；
 - 4、线程安全性：ArrayList采用异步处理，线程不安全，效率较高；Vector采用方法上加锁(synchronized关键字(同步的，代表这个方法加锁))，线程安全，效率较低。（即便使用线程安全的List，也不用Vector）
-- 5、遍历：Vector支持较老的Enumeration，ArrayList不支持
+- 5、遍历：Vector支持较老的Enumeration，ArrayList不支持，ArrayList支持Iterator、ListIterator、foreach；Vector支持Iterator、ListIterator、foreach、
+Enumeration。
 - [ ] ArrayList、Vector的共同点：底层均使用数组实现
 - [x] ArrayList、LinkedList区别：LinkedList底层采用双向链表实现，ArrayList底层采用数组实现
 ### 3.Set接口
-- [x] 不允许数据重复，Set接口没有扩充方法
+- [x] **不允许数据重复（Set接口就是Value值相同的Map集合，先有Map才有Set），Set接口没有扩充方法**
 #### Set接口常用子类：
-##### HashSet（无序存储）：
+##### HashSet（无序存储）-HashMap：
 - [ ] 1、底层使用 哈希表+红黑树
 - [ ] 2、允许存放null，无序存储
-##### TreeSet（有序存储）：Comparable、Compartor
+##### TreeSet（有序存储）- TreeMap：Comparable、Compartor
 - [ ] 1、底层使用红黑树
 - [ ] 2、不允许出现null，有序存储
 - [ ] 3、自定义类要想保存到TreeSet中，要么实现Comparable接口，要么向TreeSet传入比较器（Comparator接口）
@@ -104,12 +105,282 @@ class AscAgeComparator implements Comparator<Person> {
 - 传递性：对于任何非空x,y,z,若x.equals(y)返回true，y.equals(z)返回true，一定有x.equals(z)返回true
 - 一致性：对于任何非空的x,y,若想x与y的属性没有发生改变，则多次调用x.equals(y)始终返回true或false
 - 非空性：对于任何的非空x，x.equals(null)一定返回false
-- [ ] 先调用hashCode计算出hash码决定存放的数据桶，而后使用equals来比较元素是否相等，若相等，则不放置元素；若equals返回false。则在相同桶之后，使用链表将若干元素链起来
+- [ ] 先调用hashCode计算出hash码决定存放的数据桶，而后使用equals来比较元素是否相等，若相等，则不放置元素；若equals返回false。则在相同桶之后，使用链表将若干元素链起来。（先hashCode，若在一个数据桶再equals）
 - Object类提供的hashCode方法默认使用对象的地址进行hash
 ```
-//覆写hashCode
+//覆写hashCode ，把两个值做hash，而不是地址，hashCode保证属性值相同的元素一定在一个桶中，equals方法保证若是不一个东西就set
 public int hashCode() {
     return Objects.hash(age,name);
 }
 ```
-- [ ] 若两个equals方法返回true，他们的hashCode必然保证相等。但两对象的hashCode相等equals不一定相等
+- [ ] **若两个equals方法返回true，他们的hashCode必然保证相等（相同值的hash码一定相等）。但两对象的hashCode相等equals不一定相等，当且仅当equals与hashCode均返回true，才认为两个对象真的相等**
+- [ ] 哈希表：优化查找次数
+### 4. 集合输出(迭代器输出)-Iterator接口
+- [ ] 迭代器：为了遍历集合而生。-迭代器模式
+#### Iterator接口的两个核心方法：
+- [ ] [boolean hasNext(); 判断是否还有元素]()
+- [ ] [E next(); 取得下一个元素]()
+##### 4.1迭代器输出Iterator-只能从前向后输出
+- [ ] 调用Collection集合的子类Iterator方法取得内置迭代器，使用以下格式输出：
+```
+while (iterator.hasNext()) {
+    System.out.println(iterator.next());
+}
+```
+##### 4.2 双向迭代接口ListIterator-List支持，Set不支持
+- [ ] 除了hasNext与next方法外，还有：
+- hasPrevious():判断是否有上一个元素
+- previous：取得上一个元素
+- [ ] 要想使用从后向前遍历输出，首先至少要从前向后遍历一次才可使用
+##### 4.3 Enumeration（JDK1.0）枚举输出-Vector类支持
+- [ ] hasMoreElements():判断是否有下一个元素
+- [ ] nextElements():取得下一个元素
+##### 4.4 for-each输出（所有子类都满足）
+- [ ] 能使用for-each输出的本质在于各个集合类都内置迭代器
+
+##### fail-fast机制：
+- [ ] ConcurrentModificationExcetion发生在Collection集合使用迭代器遍历时，使用了集合类提供的修改集合内容方法报错。而如果使用Iterator迭代器的remove()不会出现此错误。
+```
+//出错机制：
+final void checkForComodification() {
+    if (modCount != expectedModCount)
+        throw new ConcurrentModificationException;
+}
+```
+- Collection 集合中的modCount表示当前集合的修改次数
+- expectModcount是迭代器中记录当前集合的修改次数，当取得集合迭代器时（即调用list.iterator()）,exceptedModCount = modCount，换言之，迭代器就是当前集合的一个副本。
+- 快速失败策略保证了所有用户在进行迭代遍历集合时，拿到的数据一定是最新的数据。（避免“脏读产生”）
+- **fail-safe:** 不产生ConCurrentModificationException异常，jar包下所有的线程安全集合（CopyOnWriteArrayList）
+- **总结：以后在迭代器遍历时，不要修改集合内容**
+```
+//eg：
+public class Test {
+    public static void main(String[] args) {
+        List<Strring> list = new ArrayList<>();
+        Collections.addAll(list,"A","B","B","C","D","E");
+        //modCount = 6
+        Iterator<String> iterator = list.iterator();
+        //取得集合迭代器（取得当前集合的副本）
+        //expectedModCount = 6
+        while(iterator.hasNext()) {
+            //调用checkForComodification检查副本中的exceptedModCount是否等于集合的modCount
+            String str = iterator.next();
+            if (strr.equals("B")) {
+                //list.remove("B");//集合类提供的remove方法，报错：ConcurrentModeficationException;
+                iterator.remove("B");//正确
+                continue;
+            }
+            System.out.println(str);
+        }
+    }
+}
+```
+## 5.Map集合
+##### Map接口是Java中保存二元偶对象（键值对）的最顶层接口
+[public interface Map<K,V> key值唯一，通过key值一定能唯一找到一个value值]()
+##### Map接口中的核心方法：
+- **public V put(K key,V value):向Map中添加数据**
+- **public V get(K key) :根据指定的key值取得相应的value值，若没有key值则返回null**
+- [public Set<Map.Entry<K,V>> entrySet() : 将Map集合变为Set集合]()
+- **public Set<K> keySet()** : 返回所有key值，**key不能重复**。
+- **public Collection<V> values()** : 返回所有value值，**value可以重复**。
+#### Map接口有如下常用子类：
+[HashMap、TreeMap、HashTable、ConcurrentHashMap]()
+#### HashMap与HashTable区别：
+- [ ] HashMap-类比HashSet
+- 1.允许key和value为null，且key值有且只有一个为null，value可以有任意多个为null
+- 2.JDK1.2产生
+- 3.异步处理效率高，线程不安全
+- 4.底层：hash表+红黑树（JDK8）
+- [ ] HashTable
+- 1.key与value均不为null
+- 2.JDK1.0产生
+- 3.使用方法加锁，效率低，线程安全
+- 4.底层hash表
+#### Map集合使用迭代器输出：
+- [ ] Set<Map.Entry<K,V>> entrySet():将Map集合转为Set集合
+```
+public class TestMapIterator {
+    public static void main(String[] args) {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "Java");
+        map.put(2, "C++");
+        map.put(3, "Python");
+        //Map——>Set
+        Set<Map.Entry<Integer, String>> set = map.entrySet();
+        //取得Set接口迭代器
+        Iterator<Map.Entry<Integer, String>> iterator = set.iterator();
+        //迭代输出
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, String> entry = iterator.next();
+            System.out.println(entry.getKey() + "=" + entry.getValue());
+        }
+    }
+}
+```
+### 6.栈和队列
+#### 栈：先入后出-Vector
+ **应用：** 函数栈帧，浏览器网页的后腿，安卓Activity的后退 ，编译器撤销
+ - 入栈：push
+ - 出栈：pop
+ - 返回栈顶元素但不出栈：peek()
+ - [ ] 自己实现一个html识别器：
+ ```
+ public class Test {
+     public static void mian(String[] args) {
+         Stack stack = new Stack();
+         stack.push(1);
+         stack.push(2);
+         stack.push(3);
+         System.out.println(stack.peek());//3
+         System.out.println(stack.pop());//3
+         System.out.println(stack.pop());//2
+         System.out.println(stack.pop());//1
+         System.out.println(stack.pop());//报错：EmptyStackException
+     }
+ }
+ ```
+#### 队列FIFO：先入先出
+**Queue接口-LinkedList**
+
+[Queue<Integer> queue = new LinkedList<>();]() 
+- 入队列：add()
+- 出队列：poll()
+- 返回队列头元素，不出对：peek()
+- 消息队列：kafka,RobitMQ
+```
+public class Test {
+     public static void mian(String[] args) {
+         Queue<Integer> queue = new LinkedList<>();
+         queue.push(1);
+         queue.push(2);
+         queue.push(3);
+         System.out.println(stack.peek());//1
+         System.out.println(stack.poll());//1
+         System.out.println(stack.poll());//2
+         System.out.println(stack.poll());//3
+         System.out.println(stack.poll());//null
+     }
+ }
+```
+### 7.资源文件操作（Properties属性文件）
+**资源文件内容都是k-v 格式，并且无论key、value都是String类型
+##### 设置属性
+- setProperty(String key,String value) 返回Object
+##### 取得属性
+- getProperty(String key,String value) 返回String,若没有指定key，返回null
+- getProperty(String key,String defaultValue):若没有指定key值返回默认值
+##### 将资源内容输入输出到目标终端
+- 输出到目标终端：store(OutputStream out,String comments);
+- 从目标终端中读取数据：load(InputStream in);
+### 8.Collections工具类
+##### 1.将线程不安全的集合包装为线程安全的集合
+- [ ] 在add、remove等方法修改上使用了同步代码块保证线程安全，效率较低。**要使用线程安全集合，推荐使用juc包下的并发集合类（ConcurrentHashMap、CopyOnWriteArrayList）**
+- [ ] 集合排序
+- Collection.sort(集合名称)
+- [ ] 集合反转
+- Collections.reverse(集合名称)
+```
+public class TestCollections01 {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        //向集合中一次添加多个元素
+        Collections.addAll(list, "A", "a", "k", "K", "B", "b");
+        //集合排序
+        Collections.sort(list);
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+        System.out.println("\n");
+        iterator = list.iterator();
+        //集合反转
+        Collections.reverse(list);
+        while (iterator.hasNext()) {
+            System.out.print(iterator.next() + " ");
+        }
+    }
+}
+/**
+ * 结果：
+ * A B K a b k
+ *
+ * k b a K B A
+ */
+```
+### 9.Stream数据流:Collection接口
+[核心方法:取得Stream流 Stream<E> stream()]()
+##### 常用方法：
+- [ ] forEach:集合输出
+- [ ] filter:数据过滤
+- [ ] 取得最大最小值：max/min
+```
+public class TestStream01 {
+    public static void main(String[] args) {
+        List<Integer> list = new LinkedList<>();
+        Collections.addAll(list, 1, 2, 3, 4, 5, 6);
+        //list.forEach(System.out::print);
+        Stream<Integer> stream = list.stream();
+        //偶数个数
+   /*     System.out.println("count = " +
+                stream.filter(e -> e % 2 == 0).count());*/
+        //求集合中的最大最小值
+        System.out.println(stream.max(Integer::compareTo)
+                .get());
+    }
+}
+```
+##### Map/Reduce模型
+- [ ] map():前期数据的处理
+- [ ] reduce():数据处理后的收集
+```
+class Goods {
+    private String name;
+    private Integer count;
+    private Double price;
+
+    public Goods(String name, Integer count, Double price) {
+        this.name = name;
+        this.count = count;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+}
+public class TestMapAndReduce {
+    public static void main(String[] args) {
+        List<Goods> list = new ArrayList<>();
+        list.add(new Goods("HUAWEI",500,6000.00));
+        list.add(new Goods("APPLE",200,7000.00));
+        list.add(new Goods("XIAOMI",600,3000.00));
+        list.add(new Goods("OPPO",300,3500.00));
+        Double costs = list.stream()
+                .map(obj -> obj.getCount()*obj.getPrice())
+                .reduce((sum,x) -> sum+x).get();
+        System.out.println(costs);
+    }
+}
+//结果：7250000.0
+```
