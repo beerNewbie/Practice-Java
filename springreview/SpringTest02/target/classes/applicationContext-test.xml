@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+
+
+    http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--
+    这句话相当于
+    Person person = new Person();
+    所以Person类中必须要有一个默认的构造方法
+    -->
+    <bean id="personid" class="com.hbc.bean.Person">
+        <!--1.通过setter方法实现注入属性-->
+        <property name="name" value="Beer"/>
+        <!--2.通过构造方法注入(name 必须同步)-->
+        <!--<constructor-arg name="name0" value="Wine"/>-->
+    </bean>
+    <bean id="userInfo"  class="com.hbc.bean.UserInfo">
+        <property name="userName" value="Water"/>
+        <property name="person" ref="personid"/>
+    </bean>
+
+</beans>
